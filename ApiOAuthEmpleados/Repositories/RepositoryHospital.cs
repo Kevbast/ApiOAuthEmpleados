@@ -8,6 +8,7 @@ namespace ApiOAuthEmpleados.Repositories
     public class RepositoryHospital
     {
         private HospitalContext context;
+
         public RepositoryHospital(HospitalContext context)
         {
             this.context = context;
@@ -29,7 +30,9 @@ namespace ApiOAuthEmpleados.Repositories
             return await this.context.Empleados.Where(z =>z.Apellido == apellido && z.IdEmpelado == idEmpleado).FirstOrDefaultAsync();
         }
 
-
-
+        public async Task<List<Empleado>> GetCompisAsync(int idDepartamento)
+        {
+            return await this.context.Empleados.Where(z=>z.IdDepartamento==idDepartamento).ToListAsync();
+        }
     }
 }

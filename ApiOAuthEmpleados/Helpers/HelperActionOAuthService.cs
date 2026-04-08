@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ApiOAuthEmpleados.Helpers
@@ -29,6 +30,21 @@ namespace ApiOAuthEmpleados.Helpers
             //CONVERTIMOS A Byte nuestra secret key
             byte[] data = Encoding.UTF8.GetBytes(this.SecretKey);
             return new SymmetricSecurityKey(data);
+        }
+
+        /// <summary>
+        /// Genera la clave de cifrado de datos a partir de la misma SecretKey del token.
+        /// </summary>
+        /// <returns>Clave en bytes para cifrado AES.</returns>
+        public byte[] GetDataEncryptionKeyBytes()
+        {
+            if (string.IsNullOrWhiteSpace(this.SecretKey))
+            {
+                throw new InvalidOperationException("No se ha configurado la SecretKey.");
+            }
+
+            byte[] secretBytes = Encoding.UTF8.GetBytes(this.SecretKey);
+            return SHA256.HashData(secretBytes);
         }
 
         //UTILIZAMOS CLASES ACTION PARA SEPARA LA CAPA DE LOS SERVICES DE AUTORIZACION DEL PROGRAM

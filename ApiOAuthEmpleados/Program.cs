@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 HelperActionOAuthService helper = new HelperActionOAuthService(builder.Configuration);
 //ESTA INSTANCIA SOLAMENTE DEBEMOS CREARLA UNA VEZ(SINGELTON)
 builder.Services.AddSingleton<HelperActionOAuthService>(helper);
+builder.Services.AddSingleton<HelperCifrado>();
 //HABILITAMOS LA SEGURIDAD DENTRO DE PROGRAM
 builder.Services.AddAuthentication(helper.GetAuthenticationSchema()).AddJwtBearer(helper.GetJWtBearerOptions());
 

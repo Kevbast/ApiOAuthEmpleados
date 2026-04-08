@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MvcOAuthEmpleados.Filters;
 using MvcOAuthEmpleados.Models;
 using MvcOAuthEmpleados.Services;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MvcOAuthEmpleados.Controllers
@@ -12,28 +14,36 @@ namespace MvcOAuthEmpleados.Controllers
         {
             this.service = service;
         }
-
+        [AuthorizeEmpleados]
         public async Task<IActionResult> Index()
         {
             List<Empleado> empleados = await this.service.GetEmpleadosAsync();
             return View(empleados);
         }
-
+        [AuthorizeEmpleados]
         public async Task<IActionResult> Details(int idEmpleado)
         {
-            //TENDREMOS EL TOKEN EN SESSION CUANDO SE VALIDE
-            string token = HttpContext.Session.GetString("TOKEN");
-            if (token == null)
-            {
-                ViewData["MENSAJE"] = "TIENES QUE LOGEARTE";
-                return View();
-            }
-            else
-            {
-                Empleado empleado = await this.service.FindEmpleadoById(idEmpleado,token);
+
+                Empleado empleado = await this.service.FindEmpleadoById(idEmpleado);
                 return View(empleado);
-            }
+            
         }
+
+        [AuthorizeEmpleados]//VAMOS A CAMBIARLO
+        public async Task<IActionResult> PerfilEmpleado()
+        {
+                Empleado empleado = await this.service.GetPerfilAsync();
+                return View(empleado);
+            
+        }
+        [AuthorizeEmpleados]
+        public async Task<IActionResult> Compis()
+        {
+            List<Empleado> empleados = await this.service.GetCompisAsync();
+            return View(empleados);
+        }
+
+
 
 
     }

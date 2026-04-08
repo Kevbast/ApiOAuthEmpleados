@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ApiOAuthEmpleados.Controllers
 {
@@ -15,10 +16,12 @@ namespace ApiOAuthEmpleados.Controllers
         private RepositoryHospital repo;
         //Importante el helper tmb
         private HelperActionOAuthService helper;
-        public AuthController(RepositoryHospital repo, HelperActionOAuthService helper)
+        private HelperCifrado helperCifrado;
+        public AuthController(RepositoryHospital repo, HelperActionOAuthService helper, HelperCifrado helperCifrado)
         {
             this.repo = repo;
             this.helper = helper;
+            this.helperCifrado = helperCifrado;
         }
 
         //METODO PARA VALIDAR EL USUARIO(POST)
@@ -35,14 +38,23 @@ namespace ApiOAuthEmpleados.Controllers
             {
                 //DEBEMOS CREAR UNAS CREDENCIALES CON NUESTRO TOKEN
                 SigningCredentials credentials = new SigningCredentials(this.helper.GetKeyToken(),SecurityAlgorithms.HmacSha256);
+                
+                byte[] keyData = this.helper.GetDataEncryptionKeyBytes();
+                byte[] userDataCifrada = this.helperCifrado.Cifrar(empleado, keyData);
+                string userDataBase64 = Convert.ToBase64String(userDataCifrada);
+                //CREAMOS UN ARRAY DE CLAIMS PARA EL TOKEN
+                Claim[] informacion = new[] { 
+                new Claim("UserData",userDataBase64)
+                };
 
                 //EL TOKEN SE GENERA CON UNA CLASE Y DEBEMOS ALMACENAR LOS DATOS DE ISSUER,CREDENTIALS....
                 JwtSecurityToken token = new JwtSecurityToken(
+                    claims: informacion,//añadida para recogerla con el token
                     issuer: this.helper.Issuer,
                     audience: this.helper.Audience,
                     signingCredentials: credentials,//credenciales creadas anteriormente
-                    expires:DateTime.UtcNow.AddMinutes(20),//tiempo que se expira
-                    notBefore:DateTime.UtcNow//no validar antes
+                    expires: DateTime.UtcNow.AddMinutes(20),//tiempo que se expira
+                    notBefore: DateTime.UtcNow//no validar antes
                     );
 
                 //POR ULTIMO DEVOLVEMOS LA RESPUESTA AFIRMATIVA CON EL TOKEN
