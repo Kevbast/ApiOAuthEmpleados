@@ -68,7 +68,7 @@ namespace ApiOAuthEmpleados.Controllers
                 return Unauthorized();
             }
         }
-        [Authorize]
+        [Authorize(Roles ="PRESIDENTE")]//LO AÑADIMOS LA RESTRICCION EN AUTHORIZE
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<Empleado>>> Compis()
@@ -111,6 +111,31 @@ namespace ApiOAuthEmpleados.Controllers
             byte[] encryptedBytes = Convert.FromBase64String(encryptedUserData);
             return this.helperCifrado.Descifrar<Empleado>(encryptedBytes, keyData);
         }
+
+        //OFICIOS Y MULTIPLES PARAMETROS
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<List<string>>> Oficios()
+        {
+            return await this.repo.GetOficiosAsync();
+        }
+        //?oficio=ANALISTA&oficio=EMPLEADO
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<List<Empleado>>> EmpleadosOficios([FromQuery] List<string> oficio)
+        {
+
+            return await this.repo.GetEmpleadosPorOficiosAsync(oficio);
+        }
+        [HttpPut]
+        [Route("[action]/{incremento}")]//LOS FROMQUERY NO SE DECLARAN EN LOS ROUTE!!!
+        public async Task<ActionResult>IncrementarSalariosEmpOficio(int incremento,[FromQuery]List<string> oficio)
+        {
+            await this.repo.IncrementarSalarioEmpleadosPorOficiosAsync(incremento, oficio);
+            return Ok();
+        }
+
+
 
     }
 }

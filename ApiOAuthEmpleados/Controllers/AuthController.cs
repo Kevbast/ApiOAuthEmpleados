@@ -43,8 +43,10 @@ namespace ApiOAuthEmpleados.Controllers
                 byte[] userDataCifrada = this.helperCifrado.Cifrar(empleado, keyData);
                 string userDataBase64 = Convert.ToBase64String(userDataCifrada);
                 //CREAMOS UN ARRAY DE CLAIMS PARA EL TOKEN
-                Claim[] informacion = new[] { 
-                new Claim("UserData",userDataBase64)
+                //AQUI ALMACENARÍAMOS EL ROL DEL USUARIO
+                Claim[] informacion = new[] {
+                new Claim("UserData",userDataBase64),
+                new Claim(ClaimTypes.Role,empleado.Oficio)//más sencillo su implementacion
                 };
 
                 //EL TOKEN SE GENERA CON UNA CLASE Y DEBEMOS ALMACENAR LOS DATOS DE ISSUER,CREDENTIALS....

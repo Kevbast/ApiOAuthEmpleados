@@ -22,6 +22,49 @@ namespace MvcOAuthEmpleados.Services
             this.contextAccessor = contextAccessor;
         }
 
+        //TANTO EN ICREMENTAR COMO EN BUSCAR LOS EMPLEADOS POR OFICIOS NECESITAMOS GENERAR EL SIGUIENTE STRING PARA EL REQUEST
+        //oficio=ANALISTA&oficio=EMPLEADO
+
+        private string TransformCollectionToQuery(List<string> collection)
+        {
+            string result = "";
+            foreach (string oficio  in collection)
+            {
+                result += "oficio=" + oficio + "&";
+            }
+            result = result.TrimEnd('&');
+            return result;
+        }
+        public async Task<List<Empleado>> GetEmpleadoOficiosAsync(List<string> oficios)
+        {
+            string request = "api/Empleados/EmpleadosOficios";
+            string data = this.TransformCollectionToQuery(oficios);
+            List<Empleado> empleados = await this.CallApiAsync<List<Empleado>>(request + "?" + data);
+            return empleados;
+        }
+        //PRIMER UPDATE
+        public async Task IncrementarSalarioEmpOficiosAsync(int incremento,List<string> oficios)
+        {
+            string request = "api/Empleados/IncrementarSalariosEmpOficio/"+incremento;
+            string data = this.TransformCollectionToQuery(oficios);
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                HttpResponseMessage response = await client.PutAsync(request + "?"+ data, null);
+            }
+        }
+        public async Task<List<string>> GetOficiosAsync()
+        {
+            string request = "api/Empleados/Oficios";
+            List<string> oficios = await this.CallApiAsync<List<string>>(request);
+            return oficios;
+        }
+
+        //======
+
         public async Task<string> LoginAsync(string user,string pass)//es el GetTokenAsync
         {
             using (HttpClient client = new HttpClient())

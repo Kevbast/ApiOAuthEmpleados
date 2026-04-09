@@ -34,5 +34,30 @@ namespace ApiOAuthEmpleados.Repositories
         {
             return await this.context.Empleados.Where(z=>z.IdDepartamento==idDepartamento).ToListAsync();
         }
+
+        //Metodos con multiples parametros 09/04/2026
+
+        public async Task<List<string>> GetOficiosAsync()
+        {
+            var consulta = (from datos in this.context.Empleados select datos.Oficio).Distinct();
+            return await consulta.ToListAsync();
+        }
+
+        public async Task<List<Empleado>> GetEmpleadosPorOficiosAsync(List<string> oficios)
+        {
+            var consulta = from datos in this.context.Empleados where oficios.Contains(datos.Oficio) 
+                           select datos;
+            return await consulta.ToListAsync();
+        }
+        public async Task IncrementarSalarioEmpleadosPorOficiosAsync(int incremento,List<string> oficios)
+        {
+            List<Empleado> empleados = await this.GetEmpleadosPorOficiosAsync(oficios);
+            foreach (Empleado emp  in empleados)
+            {
+                emp.Salario += incremento;
+            }
+            await this.context.SaveChangesAsync();
+        }
+
     }
 }

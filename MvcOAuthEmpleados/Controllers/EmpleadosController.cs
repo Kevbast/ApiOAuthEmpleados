@@ -43,7 +43,27 @@ namespace MvcOAuthEmpleados.Controllers
             return View(empleados);
         }
 
+        //EMPEZAMOS CON EL MANEJO DE MULTIPLES OFICIOS
 
+        public async Task<IActionResult> EmpleadosOficios()
+        {
+            List<string> oficios = await this.service.GetOficiosAsync();
+            ViewData["OFICIOS"] = oficios;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmpleadosOficios(int? incremento,string accion,List<string> oficio)//oficio!
+        {
+            List<string> oficios = await this.service.GetOficiosAsync();
+            ViewData["OFICIOS"] = oficios;
+            if(accion.ToLower()=="update")
+            {
+                await this.service.IncrementarSalarioEmpOficiosAsync(incremento.Value, oficio);//SOLO A LOS OFICIOS PASADOS
+            }
+            List<Empleado> empleados = await this.service.GetEmpleadoOficiosAsync(oficio);
+            return View(empleados);
+        }
 
 
     }

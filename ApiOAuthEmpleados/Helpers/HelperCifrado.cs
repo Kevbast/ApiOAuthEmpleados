@@ -58,7 +58,7 @@ namespace ApiOAuthEmpleados.Helpers
             {
                 throw new ArgumentException("El contenido cifrado no es válido.", nameof(encryptedData));
             }
-
+            
             byte[] iv = new byte[16];
             byte[] cipherBytes = new byte[encryptedData.Length - iv.Length];
 

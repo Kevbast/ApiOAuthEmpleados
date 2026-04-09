@@ -1,0 +1,81 @@
+﻿@model IEnumerable<MvcOAuthEmpleados.Models.Empleado>
+
+@{
+    ViewData["Title"] = "EmpleadosOficios";
+}
+@{
+    List<string> oficios= ViewData["Oficios"] as List<string> ;
+}
+
+<h1>EmpleadosOficios</h1>
+
+<form method="post">
+    <label>Incremento salarial</label>
+    <input type="number" name="incremento" />
+    <label>OFICIOS:</label>
+    <select name="oficio" size="5" multiple class="form-control">
+        @foreach(string ofi in oficios)
+            {
+                <option value="@ofi">@ofi</option>
+            }
+            
+    </select>
+    <button class="btn btn-success" value="show" name="accion">Mostrar empleados</button>
+    <button class="btn btn-info" value="update" name="accion">SubirSalario empleado</button>
+</form>
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.IdEmpelado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Apellido)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Oficio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Salario)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IdDepartamento)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdEmpelado)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Oficio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Salario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdDepartamento)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>No se han cargado los empleados de los oficios</h2>
+}
