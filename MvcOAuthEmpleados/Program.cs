@@ -1,9 +1,15 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Azure;
 using MvcOAuthEmpleados.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 //inyectamos el httpcontextaccesor
 builder.Services.AddHttpContextAccessor();
+//nueva implementacion de azure keyvaults
+builder.Services.AddAzureClients(factory =>
+{
+    factory.AddSecretClient(builder.Configuration.GetSection("KeyVault"));
+});
 
 //EN PROGRAM HABILITAMOS TODO SESSION E INYECTAMOS SERVICIOS
 

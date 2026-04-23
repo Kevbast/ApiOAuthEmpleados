@@ -4,5 +4,10 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <form  method="post">
+        <label>Nombre del secreto</label>
+        <input type="text" name="secretname"  class="form-control"/>
+        <button class="btn btn-info">Mostrar secreto</button>
+    </form>
+    <h2 style="color:blueviolet">@ViewData["SECRETO"]</h2>
 </div>
